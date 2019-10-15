@@ -33,40 +33,41 @@
    </div>
   </div>
 <script>
-var erddap = new ERDDAP('http://10.11.1.82/erddap');
-var ds = erddap.dataset('public_erddap_compass');
-function showCharts(datasourceid,period){
+function showCharts(erddap_url, dataset_id, datasourceid,period){
+  var erddap = new ERDDAP(erddap_url);
+  var ds = erddap.dataset(dataset_id);
   document.getElementById("datasourceid").innerText = datasourceid;
   document.getElementById("period").innerText = 'Last '+period+' met data';
   var vars = [
         "time",
         // 1. Airmar
-        "airmar_wind_gust_max",
-        "airmar_wind_speed_avg",
-        "airmar_atmospheric_pressure_avg",
-        "avrg_wind_direction_wvc",
+        "Airmar_Max_Gust",
+        "Airmar_Wind_Speed",
+        "Airmar_Atmospheric_Pressure",
+        "WVc_Wind_Direction",
         // 2. Contros
-        "contros_pco2_avg",
-        "contros_voltage_avg",
+        "Contros_PCO2",
+        "Contros_Current",
         // 3. SBE
-        "sbe_conductivity_avg",
-        "sbe_pressure_avg",
-        "sbe_salinity_avg",
-        "sbe_temp_avg",
-        // 4. Seafet
-        "seafet_ph_ext_avg",
-        "seafet_ph_int_avg",
-        "seafet_temp_avg",
+        "SBE_Electrical_Conductivity",
+        "SBE_Pressure",
+        "SBE_Salinity",
+        "SBE_Temperature",
+        // 4. SeaFet
+        "SeaFet_PH_External",
+        "SeaFet_PH_Internal",
+        "SeaFet_Temperature",
         // 5. Suna
-        "suna_absorbance_254nm_avg",
-        "suna_absorbance_350nm_avg", 
-        "suna_int_humidity_avg",
-        "suna_int_temp_avg", 
-        "suna_nitrate_conc_avg",
-        "suna_nitrogen_avg",
-        "suna_spectrum_avrg_avg"
+        "Suna_Absorbance_254nm",
+        "Suna_Absorbance_350nm", 
+        "Suna_Internal_Humidity",
+        "Suna_Internal_Temperature", 
+        "Suna_Nitrate_Concentration",
+        "Suna_Nitrogen",
+        "Suna_Spectrum"
   ];
-  ds.constrain({since: period+" ago", datasourceid: datasourceid}).fetchJSON(vars).then(function(data){
+  //ds.constrain({since: period+" ago", datasourceid: datasourceid}).fetchJSON(vars).then(function(data){
+  ds.constrain({since: period+" ago"}).fetchJSON(vars).then(function(data){
       showAirmarWindSpeedChart(data);
       showAirmarWindSpeedHCChart(data);
       showAirmarPressureChart(data);
@@ -80,21 +81,21 @@ function showCharts(datasourceid,period){
     document.getElementById(el).innerHTML='';
     var trace1 = {
       x: erddap_data.map(function(e){return e.time;}),
-      y: erddap_data.map(function(e){return e.airmar_wind_speed_avg;}),
+      y: erddap_data.map(function(e){return e.Airmar_Wind_Speed;}),
     name: 'Wind Speed (avg)',
       mode: 'lines'
     };
     
     var trace2 = {
       x: erddap_data.map(function(e){return e.time;}),
-      y: erddap_data.map(function(e){return e.airmar_wind_gust_max;}),
+      y: erddap_data.map(function(e){return e.Airmar_Max_Gust;}),
       name: 'Wind Gust(max)',
       mode: 'lines'
     };
 
     var trace3 = {
       x: erddap_data.map(function(e){return e.time;}),
-      y: erddap_data.map(function(e){return e.avrg_wind_direction_wvc}),
+      y: erddap_data.map(function(e){return e.WVc_Wind_Direction}),
       name: 'Direction',
       line: {color: 'green'},
       yaxis: 'y2',
@@ -128,10 +129,10 @@ function showCharts(datasourceid,period){
     var time = erddap_data.map(function(e){return new Date(e.time).getTime();});
     var data = erddap_data.map(function(e){
 // converting wind speed from knots to m/s
-            return [new Date(e.time).getTime(),Math.round(e.airmar_wind_speed_avg/1.943844*100)/100,e.avrg_wind_direction_wvc];});
+            return [new Date(e.time).getTime(),Math.round(e.Airmar_Wind_Speed/1.943844*100)/100,e.WVc_Wind_Direction];});
     var gustdata = erddap_data.map(function(e){
 // converting wind speed from knots to m/s
-            return [new Date(e.time).getTime(),Math.round(e.airmar_wind_gust_max/1.943844*100)/100,e.avrg_wind_direction_wvc];});
+            return [new Date(e.time).getTime(),Math.round(e.Airmar_Max_Gust/1.943844*100)/100,e.WVc_Wind_Direction];});
     var fifthdata = [];
     for(var i=0;i<data.length;i+=5){
         fifthdata.push(data[i]);
@@ -217,7 +218,7 @@ function showCharts(datasourceid,period){
     document.getElementById(el).innerHTML='';
     var trace1 = {
       x: erddap_data.map(function(e){return e.time;}),
-      y: erddap_data.map(function(e){return e.airmar_atmospheric_pressure_avg;}),
+      y: erddap_data.map(function(e){return e.Airmar_Atmospheric_Pressure;}),
     name: 'Atmospheric Pressure (avg)',
       mode: 'lines'
     };
@@ -237,14 +238,14 @@ function showCharts(datasourceid,period){
     document.getElementById(el).innerHTML='';
     var trace1 = {
       x: erddap_data.map(function(e){return e.time;}),
-      y: erddap_data.map(function(e){return e.sbe_temp_avg;}),
+      y: erddap_data.map(function(e){return e.SBE_Temperature;}),
     name: 'SST (C)',
       mode: 'lines'
     };
     
     var trace2 = {
       x: erddap_data.map(function(e){return e.time;}),
-      y: erddap_data.map(function(e){return e.sbe_salinity_avg;}),
+      y: erddap_data.map(function(e){return e.SBE_Salinity;}),
       name: 'Salinity (PSU)',
       mode: 'lines',
       line: {color: 'green'},
@@ -273,21 +274,21 @@ function showCharts(datasourceid,period){
     document.getElementById(el).innerHTML='';
     var trace1 = {
       x: erddap_data.map(function(e){return e.time;}),
-      y: erddap_data.map(function(e){return e.seafet_ph_ext_avg;}),
+      y: erddap_data.map(function(e){return e.SeaFet_PH_External;}),
     name: 'pH ext',
       mode: 'lines'
     };
     
     var trace2 = {
       x: erddap_data.map(function(e){return e.time;}),
-      y: erddap_data.map(function(e){return e.seafet_ph_int_avg;}),
+      y: erddap_data.map(function(e){return e.SeaFet_PH_Internal;}),
       name: 'pH int',
       mode: 'lines'
     };
 
     var trace3 = {
       x: erddap_data.map(function(e){return e.time;}),
-      y: erddap_data.map(function(e){return e.seafet_temp_avg;}),
+      y: erddap_data.map(function(e){return e.SeaFet_Temperature;}),
       name: 'Temperature',
       yaxis: 'y2',
       mode: 'lines'
@@ -316,14 +317,14 @@ function showCharts(datasourceid,period){
     document.getElementById(el).innerHTML='';
     var trace1 = {
       x: erddap_data.map(function(e){return e.time;}),
-      y: erddap_data.map(function(e){return e.contros_pco2_avg;}),
+      y: erddap_data.map(function(e){return e.Contros_PCO2;}),
     name: 'pco2',
       mode: 'lines'
     };
     
     var trace2 = {
       x: erddap_data.map(function(e){return e.time;}),
-      y: erddap_data.map(function(e){return e.contros_voltage_avg;}),
+      y: erddap_data.map(function(e){return e.Contros_Current;}),
       name: 'Voltage',
       yaxis: 'y2',
       mode: 'lines'
@@ -347,7 +348,8 @@ function showCharts(datasourceid,period){
   }
 
 }
-showCharts("Compass-CR6-6506", "7 days");
+//showCharts("Compass-CR6-6506", "7 days");
+showCharts('http://10.11.1.82/erddap' ,'public_erddap_compass', "Compass Mace Head Observation Buoy", "7 days");
 </script>
 </body>
 </html>
