@@ -34,7 +34,7 @@
   </div>
 <script>
 var erddap = new ERDDAP('http://10.11.1.82/erddap');
-var ds = erddap.dataset('compass_buoy');
+var ds = erddap.dataset('public_erddap_compass');
 function showCharts(datasourceid,period){
   document.getElementById("datasourceid").innerText = datasourceid;
   document.getElementById("period").innerText = 'Last '+period+' met data';
@@ -351,4 +351,3 @@ showCharts("Compass-CR6-6506", "7 days");
 </script>
 </body>
 </html>
-
